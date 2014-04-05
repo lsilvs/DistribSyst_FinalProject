@@ -13,4 +13,12 @@ class JokenpoServant implements HandlerGameOperations {
 
 	}
 
+	public void newGame (int gameId, int playerOne, int playerTwo) {
+
+	}
+
+  public void sendAction (int gameId, int playerId, org.omg.CORBA.Any option) {
+  	
+  }
+
 }

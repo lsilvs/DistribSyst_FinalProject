@@ -9,6 +9,7 @@ import java.net.*;
 
 import AddressBook.*;
 import Communication.*;
+import Jokenpo.*;
 
 public class Client {
 
@@ -38,17 +39,26 @@ public class Client {
 			objRefFP = rootCtx.resolve(nc);
 			HandlerMessage communicationRef = HandlerMessageHelper.narrow(objRefFP);
 
+			Communication.ClientOps callBackCommunicationRef = new Communication.ClientOps_Tie(new ClientOpsCommunicationImpl());
+			Any callBackRefCommunicationAny = ORB.init().create_any();
+			Communication.ClientOpsHelper.insert(callBackRefCommunicationAny, callBackCommunicationRef);
+
+			Jokenpo.ClientOps callBackJokenpoRef = new Jokenpo.ClientOps_Tie(new ClientOpsJokenpoImpl());
+			Any callBackRefJokenpoAny = ORB.init().create_any();
+			Jokenpo.ClientOpsHelper.insert(callBackRefJokenpoAny, callBackJokenpoRef);
 
 			AddressAccountDetails accountDetails1 = new AddressAccountDetails(
 				"Lucas Silvestre", // name
 				"NCI on Campus", // address
 				"0831747645", // phoneNumber
-				"lukas.silvestre@gmail.com" // email
+				"lukas.silvestre@gmail.com", // email
+				callBackRefCommunicationAny, // email
+				callBackRefJokenpoAny // email
 			);
 
 			Any anyAccount = ORB.init().create_any();
-			AnyHolder uniqueId1 = new AnyHolder();
-			AnyHolder uniqueId2 = new AnyHolder();
+			IntHolder uniqueId1 = new IntHolder();
+			IntHolder uniqueId2 = new IntHolder();
 
 			try {
 				AddressAccountDetailsHelper.insert(anyAccount, accountDetails1);
@@ -62,7 +72,9 @@ public class Client {
 				"Antonio Marques", // name
 				"NCI on Campus", // address
 				"0831701720", // phoneNumber
-				"antoioricardojr@gmail.com" // email
+				"antoioricardojr@gmail.com", // email
+				callBackRefCommunicationAny, // email
+				callBackRefJokenpoAny // email
 			);
 
 			try {
@@ -73,15 +85,13 @@ public class Client {
 
 			addressBookRef.insert(anyAccount, uniqueId2);
 
-			System.out.println(uniqueId1.value.extract_string()) ;
-			System.out.println(uniqueId2.value.extract_string()) ;
-
-
-			ClientOps callBackRef = new ClientOps_Tie(new ClientOpsImpl()) ;
+			System.out.println(uniqueId1.value);
+			System.out.println(uniqueId2.value);
+			
 			Any anyMessage = ORB.init().create_any();
 			anyMessage.insert_string("anyMessage");
 
-			communicationRef.registerCB(callBackRef, anyMessage);
+			// communicationRef.registerCB(callBackRef, anyMessage);
 
 		} catch (Exception e) {
 		  System.out.println("ERROR : " + e) ;
@@ -90,7 +100,13 @@ public class Client {
 	}
 }
 
-class ClientOpsImpl implements ClientOpsOperations {
+class ClientOpsCommunicationImpl implements Communication.ClientOpsOperations {
+	public void callBack(org.omg.CORBA.Any message) {
+		System.out.println("Message via callBack from server is " + message.extract_string());
+	}
+}
+
+class ClientOpsJokenpoImpl implements Jokenpo.ClientOpsOperations {
 	public void callBack(org.omg.CORBA.Any message) {
 		System.out.println("Message via callBack from server is " + message.extract_string());
 	}
