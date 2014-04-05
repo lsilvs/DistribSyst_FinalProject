@@ -1,0 +1,40 @@
+module AddressBook {
+
+	struct AddressAccountDetails {
+		string name;
+		string address;
+		string phoneNumber;
+		string email;
+	};
+
+	interface Address {
+		void insert(in any addressAccountDetailsIn, out any emailOut);
+		void get(in any email, out any addressAccountDetailsOut);
+	};
+
+};
+
+
+module Communication {
+
+	interface ClientOps {
+		void callBack(in any message);
+	};
+
+	interface HandlerMessage {
+		void registerCB(in ClientOps c, in any message);
+	};
+
+};
+
+module Jokenpo {
+
+	interface ClientOps {
+		void callBack(in any message);
+	};
+
+	interface HandlerGame {
+		void registerCB(in ClientOps c, in any option);
+	};
+
+};
