@@ -5,8 +5,6 @@ module AddressBook {
 		string address;
 		string phoneNumber;
 		string email;
-		any communicationClientOps;
-		any jokenpoClientOps;
 	};
 
 	interface Address {
@@ -25,9 +23,9 @@ module Communication {
 	};
 
 	interface HandlerMessage {
-		void registerCB(in ClientOps c, in any message);
+		void registerCB(in ClientOps c, in long userId);
 		void addUserToChat(in long chatId, in long userId);
-		void sendMessage(in long chatId, in long userId, in any message);
+		void sendMessage(in long userId, in any message);
 	};
 
 };

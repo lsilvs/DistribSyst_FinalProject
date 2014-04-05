@@ -6,6 +6,8 @@ import org.omg.CosNaming.NamingContextPackage.*;
 import java.util.*;
 
 import java.net.*;
+import java.util.Scanner;
+import javax.swing.*;
 
 import AddressBook.*;
 import Communication.*;
@@ -15,6 +17,15 @@ public class Client {
 
 	public static void main(String args[]) {
 		try {
+
+
+			RegistrationUI dialog = new RegistrationUI(new javax.swing.JFrame(), true);
+			dialog.setVisible(true);
+
+			while(true) {
+
+			}
+
 		  NameComponent nc[] = new NameComponent[2];
 			// At unix based system the port 900 is used for something, that is
 			// the reason that I choose to use the port 1050
@@ -32,33 +43,21 @@ public class Client {
 			nc[1] = new NameComponent("AddressBook", "Object");
 			org.omg.CORBA.Object objRefFP = rootCtx.resolve(nc);
 			Address addressBookRef = AddressHelper.narrow(objRefFP);
-
 			
 			nc[0] = new NameComponent("FinalProject", "Context");
 			nc[1] = new NameComponent("Communication", "Object");
 			objRefFP = rootCtx.resolve(nc);
 			HandlerMessage communicationRef = HandlerMessageHelper.narrow(objRefFP);
 
-			Communication.ClientOps callBackCommunicationRef = new Communication.ClientOps_Tie(new ClientOpsCommunicationImpl());
-			Any callBackRefCommunicationAny = ORB.init().create_any();
-			Communication.ClientOpsHelper.insert(callBackRefCommunicationAny, callBackCommunicationRef);
-
-			Jokenpo.ClientOps callBackJokenpoRef = new Jokenpo.ClientOps_Tie(new ClientOpsJokenpoImpl());
-			Any callBackRefJokenpoAny = ORB.init().create_any();
-			Jokenpo.ClientOpsHelper.insert(callBackRefJokenpoAny, callBackJokenpoRef);
-
 			AddressAccountDetails accountDetails1 = new AddressAccountDetails(
 				"Lucas Silvestre", // name
 				"NCI on Campus", // address
 				"0831747645", // phoneNumber
-				"lukas.silvestre@gmail.com", // email
-				callBackRefCommunicationAny, // email
-				callBackRefJokenpoAny // email
+				"lukas.silvestre@gmail.com" // email
 			);
 
 			Any anyAccount = ORB.init().create_any();
-			IntHolder uniqueId1 = new IntHolder();
-			IntHolder uniqueId2 = new IntHolder();
+			IntHolder uniqueId = new IntHolder();
 
 			try {
 				AddressAccountDetailsHelper.insert(anyAccount, accountDetails1);
@@ -66,32 +65,31 @@ public class Client {
 				System.out.println("insert any error\n" + "Unexpected exception:\n" + se.toString ());
 			}
 
-			addressBookRef.insert(anyAccount, uniqueId1);
+			addressBookRef.insert(anyAccount, uniqueId);
 
-			AddressAccountDetails accountDetails2 = new AddressAccountDetails(
-				"Antonio Marques", // name
-				"NCI on Campus", // address
-				"0831701720", // phoneNumber
-				"antoioricardojr@gmail.com", // email
-				callBackRefCommunicationAny, // email
-				callBackRefJokenpoAny // email
-			);
+			Communication.ClientOps callBackCommunicationRef = new Communication.ClientOps_Tie(new ClientOpsCommunicationImpl());
+			Jokenpo.ClientOps callBackJokenpoRef = new Jokenpo.ClientOps_Tie(new ClientOpsJokenpoImpl());
+			communicationRef.registerCB(callBackCommunicationRef, uniqueId.value);
 
-			try {
-				AddressAccountDetailsHelper.insert(anyAccount, accountDetails2);
-			} catch (SystemException se) {
-				System.out.println("insert any error\n" + "Unexpected exception:\n" + se.toString ());
-			}
+			System.out.println(uniqueId.value);
 
-			addressBookRef.insert(anyAccount, uniqueId2);
-
-			System.out.println(uniqueId1.value);
-			System.out.println(uniqueId2.value);
-			
 			Any anyMessage = ORB.init().create_any();
-			anyMessage.insert_string("anyMessage");
 
-			// communicationRef.registerCB(callBackRef, anyMessage);
+			boolean end_loop = false;
+			Scanner scanner = new Scanner(System.in);
+			System.out.println("Enter your name: ");
+			String name = scanner.nextLine();
+			while (!end_loop) {
+				String message = scanner.nextLine();
+				if(message.length() != 0) {
+					anyMessage.insert_string(message);
+					communicationRef.sendMessage(1, anyMessage);
+					communicationRef.sendMessage(2, anyMessage);
+				} else {
+					end_loop = true;
+					System.out.println("Your application will be finished.");
+				}
+			}
 
 		} catch (Exception e) {
 		  System.out.println("ERROR : " + e) ;

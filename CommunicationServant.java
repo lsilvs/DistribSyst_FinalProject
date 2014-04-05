@@ -10,22 +10,26 @@ class CommunicationServant implements HandlerMessageOperations {
 
 	ClientOps client;
 
-	private Hashtable<Integer, ClientOps> allChats = new Hashtable<Integer, ClientOps>();
-	private ClientOps chatDetails;
+	private Hashtable<Integer, ClientOps> allUsers = new Hashtable<Integer, ClientOps>();
+	private ClientOps cbDetails;
 	private static Integer ID = 1;
 
-	public void registerCB(Communication.ClientOps c, org.omg.CORBA.Any message) {
-		client = c;
-		System.out.println("Message received: " + message.extract_string());
-		client.callBack(message);
+	public void registerCB (Communication.ClientOps c, int userId) {
+		allUsers.put(userId, c);
+		System.out.println("User registred: " + userId);
 	}
 
 	public void addUserToChat (int chatId, int userId) {
 
 	}
 
-  public void sendMessage (int chatId, int userId, org.omg.CORBA.Any message) {
+  public void sendMessage (int userId, org.omg.CORBA.Any message) {
+  	cbDetails = allUsers.get(userId);
 
+  	Any anyMessage = ORB.init().create_any();
+		anyMessage.insert_string(message.extract_string());
+
+  	cbDetails.callBack(anyMessage);
   }
 
 }
