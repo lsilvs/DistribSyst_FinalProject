@@ -1,4 +1,6 @@
-package jokenPoGUI;
+package jokenpoGUI;
+
+
 
 /*
  * To change this template, choose Tools | Templates

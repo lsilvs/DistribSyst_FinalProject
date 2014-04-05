@@ -1,4 +1,6 @@
-package jokenPoGUI;
+package jokenpoGUI;
+
+
 
 /*
  * To change this template, choose Tools | Templates
@@ -15,6 +17,7 @@ public class RegistrationUI extends javax.swing.JDialog {
     private String address;
     private String phone;
     private String email;
+    private boolean okStatus;
     
 
     /**
@@ -27,6 +30,7 @@ public class RegistrationUI extends javax.swing.JDialog {
         this.address = "address";
         this.phone = "phone";
         this.email = "email";
+        this.okStatus = false;
 
     }
 
@@ -235,10 +239,21 @@ public class RegistrationUI extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_okButtonActionPerformed
 
+    
+    public boolean getOkStatus(){
+    	return this.okStatus;
+    }
+    
+    //Shows the status about form confirmation.
+    public void setOkStatus(boolean status){
+    	this.okStatus = status;	
+    }
+    
     private void okButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_okButtonMouseClicked
         // TODO add your handling code here:
         InviteContactUI invite = new InviteContactUI(new javax.swing.JFrame(), true);
         this.dispose();
+        setOkStatus(true);
         invite.setVisible(true);
         
     }//GEN-LAST:event_okButtonMouseClicked

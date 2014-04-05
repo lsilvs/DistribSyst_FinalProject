@@ -1,7 +1,8 @@
-package jokenPoGUI;
+package jokenpoGUI;
 
 
 import java.awt.Component;
+
 
 /*
  * To change this template, choose Tools | Templates

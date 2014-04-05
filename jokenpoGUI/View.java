@@ -1,4 +1,4 @@
-package jokenPoGUI;
+package jokenpoGUI;
 
 
 import java.awt.Frame;

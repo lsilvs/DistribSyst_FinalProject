@@ -1,14 +1,17 @@
 import java.io.*;
 import java.lang.*;
+
 import org.omg.CORBA.*;
 import org.omg.CosNaming.* ;
 import org.omg.CosNaming.NamingContextPackage.*;
-import java.util.*;
 
+import java.util.*;
 import java.net.*;
 import java.util.Scanner;
+
 import javax.swing.*;
 
+import jokenpoGUI.RegistrationUI;
 import AddressBook.*;
 import Communication.*;
 import Jokenpo.*;
@@ -17,15 +20,8 @@ public class Client {
 
 	public static void main(String args[]) {
 		try {
-
-
-			RegistrationUI dialog = new RegistrationUI(new javax.swing.JFrame(), true);
-			dialog.setVisible(true);
-
-			while(true) {
-
-			}
-
+		
+	
 		  NameComponent nc[] = new NameComponent[2];
 			// At unix based system the port 900 is used for something, that is
 			// the reason that I choose to use the port 1050
@@ -55,6 +51,8 @@ public class Client {
 				"0831747645", // phoneNumber
 				"lukas.silvestre@gmail.com" // email
 			);
+			
+			
 
 			Any anyAccount = ORB.init().create_any();
 			IntHolder uniqueId = new IntHolder();
@@ -75,21 +73,7 @@ public class Client {
 
 			Any anyMessage = ORB.init().create_any();
 
-			boolean end_loop = false;
-			Scanner scanner = new Scanner(System.in);
-			System.out.println("Enter your name: ");
-			String name = scanner.nextLine();
-			while (!end_loop) {
-				String message = scanner.nextLine();
-				if(message.length() != 0) {
-					anyMessage.insert_string(message);
-					communicationRef.sendMessage(1, anyMessage);
-					communicationRef.sendMessage(2, anyMessage);
-				} else {
-					end_loop = true;
-					System.out.println("Your application will be finished.");
-				}
-			}
+			
 
 		} catch (Exception e) {
 		  System.out.println("ERROR : " + e) ;
