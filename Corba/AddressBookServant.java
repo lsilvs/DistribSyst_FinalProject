@@ -1,10 +1,14 @@
-import java.io.*;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.*;
-import org.omg.CORBA.*;
+package Corba;
+import java.util.Hashtable;
 
-import AddressBook.*;
+import org.omg.CORBA.Any;
+import org.omg.CORBA.ORB;
+import org.omg.CORBA.Object;
+import org.omg.CORBA.TypeCode;
+
+import AddressBook.AddressAccountDetails;
+import AddressBook.AddressAccountDetailsHelper;
+import AddressBook.AddressOperations;
 
 class AddressBookServant implements AddressOperations {
 
@@ -30,11 +34,10 @@ class AddressBookServant implements AddressOperations {
   }
 
   public void getList (org.omg.CORBA.AnyHolder addressBook) {
-  	accountDetails = allAccounts.get(1);
-
   	Any anyAccount = ORB.init().create_any();
-		AddressAccountDetailsHelper.insert(anyAccount, accountDetails);
-		addressBook.value = anyAccount;
+  	
+	anyAccount.insert_Object((Object) allAccounts);
+	addressBook.value = anyAccount;
   }
 
 }

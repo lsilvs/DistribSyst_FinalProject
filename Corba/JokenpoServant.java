@@ -1,10 +1,5 @@
-import java.io.*;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.*;
-import org.omg.CORBA.*;
-
-import Jokenpo.*;
+package Corba;
+import Jokenpo.HandlerGameOperations;
 
 class JokenpoServant implements HandlerGameOperations {
 

@@ -139,4 +139,11 @@ public class InviteContactUI extends javax.swing.JDialog {
     private javax.swing.JButton inviteButton;
     private javax.swing.JComboBox jComboBox1;
     // End of variables declaration//GEN-END:variables
+	public javax.swing.JComboBox getjComboBox1() {
+		return jComboBox1;
+	}
+
+	public void setjComboBox1(javax.swing.JComboBox jComboBox1) {
+		this.jComboBox1 = jComboBox1;
+	}
 }

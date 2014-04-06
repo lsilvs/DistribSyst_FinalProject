@@ -1,12 +1,17 @@
-import java.io.*;
-import org.omg.CORBA.*;
-import org.omg.CosNaming.* ;
-import org.omg.CosNaming.NamingContextPackage.*;
-import java.util.*;
-import org.omg.PortableServer.*;
+package Corba;
+import java.util.Properties;
 
-import AddressBook.*;
-import Communication.*;
+import org.omg.CORBA.ORB;
+import org.omg.CosNaming.NameComponent;
+import org.omg.CosNaming.NamingContext;
+import org.omg.CosNaming.NamingContextHelper;
+import org.omg.PortableServer.POA;
+import org.omg.PortableServer.POAHelper;
+
+import AddressBook.AddressPOA;
+import AddressBook.AddressPOATie;
+import Communication.HandlerMessagePOA;
+import Communication.HandlerMessagePOATie;
 
 public class Server {
 

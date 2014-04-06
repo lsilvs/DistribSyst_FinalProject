@@ -1,10 +1,11 @@
-import java.io.*;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.*;
-import org.omg.CORBA.*;
+package Corba;
+import java.util.Hashtable;
 
-import Communication.*;
+import org.omg.CORBA.Any;
+import org.omg.CORBA.ORB;
+
+import Communication.ClientOps;
+import Communication.HandlerMessageOperations;
 
 class CommunicationServant implements HandlerMessageOperations {
 

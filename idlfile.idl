@@ -1,6 +1,7 @@
 module AddressBook {
 
 	struct AddressAccountDetails {
+		long id;
 		string name;
 		string address;
 		string phoneNumber;
