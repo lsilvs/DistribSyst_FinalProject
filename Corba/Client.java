@@ -1,11 +1,11 @@
 package Corba;
-import java.awt.event.MouseListener;
-import java.util.Hashtable;
-import java.util.Iterator;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 import jokenpoGUI.InviteContactUI;
 import jokenpoGUI.RegistrationUI;
+import jokenpoGUI.View;
 
 import org.omg.CORBA.Any;
 import org.omg.CORBA.AnyHolder;
@@ -22,10 +22,15 @@ import AddressBook.AddressAccountDetailsHelper;
 import AddressBook.AddressHelper;
 import Communication.HandlerMessage;
 import Communication.HandlerMessageHelper;
+import Jokenpo.HandlerGame;
+import Jokenpo.HandlerGameHelper;
 
 public class Client {
 
 	private static Address addressBookRef;
+	private static HandlerMessage communicationRef;
+	private static HandlerGame jokenpoRef;
+	private static AddressAccountDetails addressAccountDetails;
 
 	public static void main(String args[]) {
 		try {
@@ -50,19 +55,18 @@ public class Client {
 			nc[0] = new NameComponent("FinalProject", "Context");
 			nc[1] = new NameComponent("Communication", "Object");
 			objRefFP = rootCtx.resolve(nc);
-			HandlerMessage communicationRef = HandlerMessageHelper.narrow(objRefFP);
-
+			communicationRef = HandlerMessageHelper.narrow(objRefFP);
+			
+			nc[0] = new NameComponent("FinalProject", "Context");
+			nc[1] = new NameComponent("Jokenpo", "Object");
+			objRefFP = rootCtx.resolve(nc);
+			jokenpoRef = HandlerGameHelper.narrow(objRefFP);
 
 			RegistrationUI dialog = new RegistrationUI(new javax.swing.JFrame(), true);
 			dialog.setVisible(true);
-			
-			while(true){
-				
-			}
 
 
 //			Communication.ClientOps callBackCommunicationRef = new Communication.ClientOps_Tie(new ClientOpsCommunicationImpl());
-//			Jokenpo.ClientOps callBackJokenpoRef = new Jokenpo.ClientOps_Tie(new ClientOpsJokenpoImpl());
 //			communicationRef.registerCB(callBackCommunicationRef, uniqueId.value);
 
 //			System.out.println(uniqueId.value);			
@@ -74,10 +78,9 @@ public class Client {
 	}
 
 	public static void register(RegistrationUI registrationUI) {
-		System.out.println("Message via callBack from server is " + registrationUI.getPhone());
 		AddressAccountDetails accountDetails1 = new AddressAccountDetails(
 			0, // id
-			registrationUI.getName(), // name
+			registrationUI.getUsername(), // name
 			registrationUI.getAddress(), // address
 			registrationUI.getPhone(), // phoneNumber
 			registrationUI.getEmail() // email
@@ -91,30 +94,51 @@ public class Client {
 			System.out.println("insert any error\n" + "Unexpected exception:\n" + se.toString ());
 		}
 
-		IntHolder uniqueId = new IntHolder();
-		addressBookRef.insert(anyAccount, uniqueId);
-		invite(registrationUI);
+		AnyHolder aad = new AnyHolder();
+		addressBookRef.insert(anyAccount, aad);
+		addressAccountDetails = AddressAccountDetailsHelper.extract(aad.value);
+		
+		registrationUI.dispose();
+		invite();
 	}
 
-	private static void invite(RegistrationUI registrationUI) {
+	private static void invite() {
 		InviteContactUI invite = new InviteContactUI(new javax.swing.JFrame(), true);
 		
 		AnyHolder addressBook = new AnyHolder();
 		addressBookRef.getList(addressBook);
 		
-		Hashtable<Integer, AddressAccountDetails> allAccounts = new Hashtable<Integer, AddressAccountDetails>();
+		System.out.println("Message via callBack from server is " + addressBook.value.extract_string());
 		
-		allAccounts = (Hashtable<Integer, AddressAccountDetails>) addressBook.value.extract_Object();
+		List<String> items = Arrays.asList(addressBook.value.extract_string().split("\\s*,\\s*"));
 		
-		Iterator<AddressAccountDetails> it = allAccounts.values().iterator();
-
-		while (it.hasNext()) {
-			invite.getjComboBox1().addItem(it);
+		for (String temp : items) {
+			int foo = Integer.parseInt(temp);
+			AnyHolder account = new AnyHolder();
+			addressBookRef.get(foo, account);
+			AddressAccountDetails accountDetails = AddressAccountDetailsHelper.extract(account.value);
+			invite.getjComboBox1().addItem(accountDetails);
 		}
 
-		registrationUI.dispose();
-        invite.setVisible(true);
+		/* Add this code into AddressAccountDetails.java after compile the idlfile.idl
+		@Override
+		public String toString() {
+		  return this.name;
+		}
+		*/
 
+		invite.setVisible(true);
+	}
+
+	public static void view(InviteContactUI invite) {
+		Jokenpo.ClientOps callBackJokenpoRef = new Jokenpo.ClientOps_Tie(new ClientOpsJokenpoImpl());
+        jokenpoRef.registerCB(callBackJokenpoRef, 1);
+        
+        View view = new View();
+        view.setVisible(true);
+        invite.dispose();
+
+        
 	}
 }
 

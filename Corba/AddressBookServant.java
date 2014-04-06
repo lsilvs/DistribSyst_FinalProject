@@ -1,10 +1,9 @@
 package Corba;
 import java.util.Hashtable;
+import java.util.Iterator;
 
 import org.omg.CORBA.Any;
 import org.omg.CORBA.ORB;
-import org.omg.CORBA.Object;
-import org.omg.CORBA.TypeCode;
 
 import AddressBook.AddressAccountDetails;
 import AddressBook.AddressAccountDetailsHelper;
@@ -16,28 +15,38 @@ class AddressBookServant implements AddressOperations {
 	private AddressAccountDetails accountDetails;
 	private static Integer ID = 1;
 
-	public void insert (org.omg.CORBA.Any addressAccountDetailsIn, org.omg.CORBA.IntHolder addressId) {
+	public void insert (org.omg.CORBA.Any addressAccountDetailsIn, org.omg.CORBA.AnyHolder addressAccountDetailsOut) {
 		accountDetails = AddressAccountDetailsHelper.extract(addressAccountDetailsIn);
 		accountDetails.id = ID;
 		allAccounts.put(ID, accountDetails);
-		addressId.value = ID;
+		Any anyAccount = ORB.init().create_any();
+		AddressAccountDetailsHelper.insert(anyAccount, accountDetails);
+		addressAccountDetailsOut.value = anyAccount;
 		ID++;
 	}
 
   public void get (int addressId, org.omg.CORBA.AnyHolder addressAccountDetailsOut) {
-  	accountDetails = allAccounts.get(addressId);
+  		accountDetails = allAccounts.get(addressId);
 
-  	Any anyAccount = ORB.init().create_any();
+  		Any anyAccount = ORB.init().create_any();
 		AddressAccountDetailsHelper.insert(anyAccount, accountDetails);
 		addressAccountDetailsOut.value = anyAccount;
 
   }
 
   public void getList (org.omg.CORBA.AnyHolder addressBook) {
-  	Any anyAccount = ORB.init().create_any();
-  	
-	anyAccount.insert_Object((Object) allAccounts);
-	addressBook.value = anyAccount;
+	  Iterator<AddressAccountDetails> it = allAccounts.values().iterator();
+	  String str = new String();
+	  while (it.hasNext()) {
+		  str += it.next().id;
+		  if (it.hasNext()) {
+			  str += " , ";
+		  }
+	  }
+	  
+	  Any anyAccount = ORB.init().create_any();
+	  anyAccount.insert_string(str);
+	  addressBook.value = anyAccount;
   }
 
 }

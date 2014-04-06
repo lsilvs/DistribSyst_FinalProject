@@ -1,4 +1,5 @@
 package Corba;
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 import org.omg.CORBA.Any;
@@ -12,6 +13,7 @@ class CommunicationServant implements HandlerMessageOperations {
 	ClientOps client;
 
 	private Hashtable<Integer, ClientOps> allUsers = new Hashtable<Integer, ClientOps>();
+	private Hashtable<Integer, ArrayList<Integer>> chat = new Hashtable<Integer, ArrayList<Integer>>();
 	private ClientOps cbDetails;
 	private static Integer ID = 1;
 
@@ -21,14 +23,14 @@ class CommunicationServant implements HandlerMessageOperations {
 	}
 
 	public void addUserToChat (int chatId, int userId) {
-
+//		chat.put(chatId, userId);
 	}
 
   public void sendMessage (int userId, org.omg.CORBA.Any message) {
   	cbDetails = allUsers.get(userId);
 
   	Any anyMessage = ORB.init().create_any();
-		anyMessage.insert_string(message.extract_string());
+	anyMessage.insert_string(message.extract_string());
 
   	cbDetails.callBack(anyMessage);
   }

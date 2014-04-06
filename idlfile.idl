@@ -9,7 +9,7 @@ module AddressBook {
 	};
 
 	interface Address {
-		void insert(in any addressAccountDetailsIn, out long addressId);
+		void insert(in any addressAccountDetailsIn, out any addressAccountDetailsOut);
 		void get(in long addressId, out any addressAccountDetailsOut);
 		void getList(out any addressBook);
 	};
@@ -38,7 +38,7 @@ module Jokenpo {
 	};
 
 	interface HandlerGame {
-		void registerCB(in ClientOps c, in any option);
+		void registerCB(in ClientOps c, in long userId);
 		void newGame(in long gameId, in long playerOne, in long playerTwo);
 		void sendAction(in long gameId, in long playerId, in any option);
 	};

@@ -1,5 +1,7 @@
 package jokenpoGUI;
 
+import Corba.Client;
+
 
 
 /*
@@ -47,7 +49,7 @@ public class InviteContactUI extends javax.swing.JDialog {
             }
         });
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Choose a friend to play" }));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox1ActionPerformed(evt);
@@ -83,11 +85,7 @@ public class InviteContactUI extends javax.swing.JDialog {
     }//GEN-LAST:event_inviteButtonActionPerformed
 
     private void inviteButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_inviteButtonMouseClicked
-        // TODO add your handling code here:
-        View view = new View();
-        view.setVisible(true);
-        
-        this.dispose();
+        Client.view(this);
     }//GEN-LAST:event_inviteButtonMouseClicked
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
