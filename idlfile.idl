@@ -8,7 +8,12 @@ module AddressBook {
 		string email;
 	};
 
+	interface AddressBookOps {
+		void callBackAddUser(in long senderId);
+	};
+
 	interface Address {
+		void registerCB(in AddressBookOps c, in long userId);
 		void insert(in any addressAccountDetailsIn, out any addressAccountDetailsOut);
 		void get(in long addressId, out any addressAccountDetailsOut);
 		void getList(out any addressBook);
@@ -19,30 +24,29 @@ module AddressBook {
 
 module Communication {
 
-	interface ClientOps {
+	interface CommunicationOps {
 		void callBackCreateChat(in long chatId, in long senderId, in any message);
 		void callBackShowdMessage(in long chatId, in long senderId, in any message);
 	};
 
 	interface HandlerMessage {
-		void registerCB(in ClientOps c, in long userId);
+		void registerCB(in CommunicationOps c, in long userId);
 		long createChat(in long user1, in long user2);
-		void addUserToChat(in long chatId, in long userId);
 		void sendMessageToChat(in long chatId, in long senderId, in any message);
-		void sendMessage(in long userId, in any message);	
 	};
 
 };
 
 module Jokenpo {
 
-	interface ClientOps {
-		void callBack(in any message);
+	interface JokenpoOps {
+		void callBackCreateGame(in long gameId, in long senderId, in any message);
+		void callBackShowdResult(in long gameId, in long senderId, in any message);
 	};
 
 	interface HandlerGame {
-		void registerCB(in ClientOps c, in long userId);
-		void createGame(in long user1, in long user2);
+		void registerCB(in JokenpoOps c, in long userId);
+		long createGame(in long user1, in long user2);
 		void sendAction(in long gameId, in long playerId, in any option);
 	};
 

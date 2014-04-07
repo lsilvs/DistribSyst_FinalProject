@@ -117,10 +117,10 @@ public class Client {
 		addressBookRef.insert(anyAccount, aad);
 		addressAccountDetails = AddressAccountDetailsHelper.extract(aad.value);
 		
-		Communication.ClientOps callBackCommunicationRef = new Communication.ClientOps_Tie(new ClientOpsCommunicationImpl());
+		Communication.CommunicationOps callBackCommunicationRef = new Communication.CommunicationOps_Tie(new ClientOpsCommunicationImpl());
 		communicationRef.registerCB(callBackCommunicationRef, addressAccountDetails.id);
 		
-		Jokenpo.ClientOps callBackJokenpoRef = new Jokenpo.ClientOps_Tie(new ClientOpsJokenpoImpl());
+		Jokenpo.JokenpoOps callBackJokenpoRef = new Jokenpo.JokenpoOps_Tie(new ClientOpsJokenpoImpl());
         jokenpoRef.registerCB(callBackJokenpoRef, addressAccountDetails.id);
 		
 		registrationUI.dispose();
@@ -175,7 +175,7 @@ public static void view(InviteContactUI invite) {
 	}
 }
 
-class ClientOpsCommunicationImpl implements Communication.ClientOpsOperations {
+class ClientOpsCommunicationImpl implements Communication.CommunicationOpsOperations {
 	public void callBackCreateChat(int chatId, int senderId, org.omg.CORBA.Any message) {
 		Client.setChatId(chatId);
 
@@ -210,8 +210,20 @@ class ClientOpsCommunicationImpl implements Communication.ClientOpsOperations {
 	}
 }
 
-class ClientOpsJokenpoImpl implements Jokenpo.ClientOpsOperations {
+class ClientOpsJokenpoImpl implements Jokenpo.JokenpoOpsOperations {
 	public void callBack(org.omg.CORBA.Any message) {
 		System.out.println("Message via callBack from server is " + message.extract_string());
+	}
+
+	@Override
+	public void callBackCreateGame(int gameId, int senderId, Any message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void callBackShowdResult(int gameId, int senderId, Any message) {
+		// TODO Auto-generated method stub
+		
 	}
 }

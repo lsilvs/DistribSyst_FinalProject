@@ -7,13 +7,21 @@ import org.omg.CORBA.ORB;
 
 import AddressBook.AddressAccountDetails;
 import AddressBook.AddressAccountDetailsHelper;
+import AddressBook.AddressBookOps;
 import AddressBook.AddressOperations;
+import Jokenpo.JokenpoOps;
 
 class AddressBookServant implements AddressOperations {
 
+	private Hashtable<Integer, AddressBookOps> allCBs = new Hashtable<Integer, AddressBookOps>();
 	private Hashtable<Integer, AddressAccountDetails> allAccounts = new Hashtable<Integer, AddressAccountDetails>();
 	private AddressAccountDetails accountDetails;
 	private static Integer ID = 1;
+	
+	public void registerCB (AddressBookOps c, int userId) {
+		allCBs.put(userId, c);
+		System.out.println("User registred to communication: " + userId);
+	}
 
 	public void insert (org.omg.CORBA.Any addressAccountDetailsIn, org.omg.CORBA.AnyHolder addressAccountDetailsOut) {
 		accountDetails = AddressAccountDetailsHelper.extract(addressAccountDetailsIn);
