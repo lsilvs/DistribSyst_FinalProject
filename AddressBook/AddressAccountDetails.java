@@ -28,5 +28,10 @@ public final class AddressAccountDetails implements org.omg.CORBA.portable.IDLEn
     phoneNumber = _phoneNumber;
     email = _email;
   } // ctor
+  
+  @Override
+	public String toString() {
+	  return this.name;
+	}
 
 } // class AddressAccountDetails
