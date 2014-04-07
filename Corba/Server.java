@@ -12,6 +12,7 @@ import AddressBook.AddressPOA;
 import AddressBook.AddressPOATie;
 import Communication.HandlerMessagePOA;
 import Communication.HandlerMessagePOATie;
+import Jokenpo.HandlerGamePOATie;
 
 public class Server {
 
@@ -35,6 +36,9 @@ public class Server {
 			HandlerMessagePOA messageRef = new HandlerMessagePOATie(new CommunicationServant());
 			org.omg.CORBA.Object communicationServantObj = rootPOA.servant_to_reference(messageRef);
 			
+			HandlerGamePOATie gameRef = new HandlerGamePOATie(new JokenpoServant());
+			org.omg.CORBA.Object gameServantObj = rootPOA.servant_to_reference(gameRef);
+			
 			org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
 
 			NamingContext rootCtx = NamingContextHelper.narrow(objRef);
@@ -48,6 +52,9 @@ public class Server {
 			
 			nc[0] = new NameComponent("Communication", "Object");
 			projectCtx.rebind(nc, communicationServantObj);
+			
+			nc[0] = new NameComponent("Jokenpo", "Object");
+			projectCtx.rebind(nc, gameServantObj);
 
 			rootPOA.the_POAManager().activate();
 			System.out.println("Server has been started.");
