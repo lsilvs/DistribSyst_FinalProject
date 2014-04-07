@@ -10,10 +10,10 @@ class JokenpoServant implements HandlerGameOperations {
 
 	public void registerCB (Jokenpo.ClientOps c, int userId) {
 		allUsers.put(userId, c);
-		System.out.println("User registred: " + userId);
+		System.out.println("User registred to the game: " + userId);
 	}
 
-	public void newGame (int gameId, int playerOne, int playerTwo) {
+	public void createGame (int playerOne, int playerTwo) {
 
 	}
 

@@ -3,6 +3,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import javax.swing.JTextPane;
+
 import jokenpoGUI.InviteContactUI;
 import jokenpoGUI.RegistrationUI;
 import jokenpoGUI.View;
@@ -31,6 +33,29 @@ public class Client {
 	private static HandlerMessage communicationRef;
 	private static HandlerGame jokenpoRef;
 	private static AddressAccountDetails addressAccountDetails;
+	private static InviteContactUI invite = new InviteContactUI(new javax.swing.JFrame(), false);
+	private static View view = new View();
+	private static int chatId;
+	
+	public static AddressAccountDetails getAddressAccountDetails() {
+		return addressAccountDetails;
+	}
+	
+	public static InviteContactUI getInvite() {
+		return invite;
+	}
+	
+	public static View getView() {
+		return view;
+	}
+	
+	public static Address getAddressBookRef() {
+		return addressBookRef;
+	}
+	
+	public static void setChatId(int id) {
+		chatId = id;
+	}
 
 	public static void main(String args[]) {
 		try {
@@ -64,13 +89,7 @@ public class Client {
 
 			RegistrationUI dialog = new RegistrationUI(new javax.swing.JFrame(), true);
 			dialog.setVisible(true);
-
-
-//			Communication.ClientOps callBackCommunicationRef = new Communication.ClientOps_Tie(new ClientOpsCommunicationImpl());
-//			communicationRef.registerCB(callBackCommunicationRef, uniqueId.value);
-
-//			System.out.println(uniqueId.value);			
-
+			
 		} catch (Exception e) {
 		  System.out.println("ERROR : " + e) ;
 		  e.printStackTrace(System.out);
@@ -98,18 +117,22 @@ public class Client {
 		addressBookRef.insert(anyAccount, aad);
 		addressAccountDetails = AddressAccountDetailsHelper.extract(aad.value);
 		
+		Communication.ClientOps callBackCommunicationRef = new Communication.ClientOps_Tie(new ClientOpsCommunicationImpl());
+		communicationRef.registerCB(callBackCommunicationRef, addressAccountDetails.id);
+		
+		Jokenpo.ClientOps callBackJokenpoRef = new Jokenpo.ClientOps_Tie(new ClientOpsJokenpoImpl());
+        jokenpoRef.registerCB(callBackJokenpoRef, addressAccountDetails.id);
+		
 		registrationUI.dispose();
 		invite();
 	}
 
 	private static void invite() {
-		InviteContactUI invite = new InviteContactUI(new javax.swing.JFrame(), true);
-		
 		AnyHolder addressBook = new AnyHolder();
 		addressBookRef.getList(addressBook);
-		
+
 		System.out.println("Message via callBack from server is " + addressBook.value.extract_string());
-		
+
 		List<String> items = Arrays.asList(addressBook.value.extract_string().split("\\s*,\\s*"));
 		
 		for (String temp : items) {
@@ -130,20 +153,59 @@ public class Client {
 		invite.setVisible(true);
 	}
 
-	public static void view(InviteContactUI invite) {
-		Jokenpo.ClientOps callBackJokenpoRef = new Jokenpo.ClientOps_Tie(new ClientOpsJokenpoImpl());
-        jokenpoRef.registerCB(callBackJokenpoRef, 1);
-        
-        View view = new View();
-        view.setVisible(true);
+public static void view(InviteContactUI invite) {
+		
+		AddressAccountDetails guest = (AddressAccountDetails) invite.getjComboBox1().getSelectedItem();
+		
+		int chatId = communicationRef.createChat(addressAccountDetails.id, guest.id);
+		Client.setChatId(chatId);
+//		Any anyMessage = ORB.init().create_any();
+//		anyMessage.insert_string(addressAccountDetails.name + " invited you to a game");
+//		communicationRef.sendMessageToChat(chatId, addressAccountDetails.id, anyMessage);
+
+		view.setVisible(true);
         invite.dispose();
 
-        
+	}
+
+	public static void sendMessage(String message) {
+		Any anyMessage = ORB.init().create_any();
+		anyMessage.insert_string(message);
+		communicationRef.sendMessageToChat(chatId, addressAccountDetails.id, anyMessage);
 	}
 }
 
 class ClientOpsCommunicationImpl implements Communication.ClientOpsOperations {
-	public void callBack(org.omg.CORBA.Any message) {
+	public void callBackCreateChat(int chatId, int senderId, org.omg.CORBA.Any message) {
+		Client.setChatId(chatId);
+
+		if(senderId != Client.getAddressAccountDetails().id) {
+			View view = Client.getView();
+			
+			view.setVisible(true);
+	        Client.getInvite().dispose();
+	        
+			JTextPane jTextPane1 = view.getJTextPane1();
+	        String oldMessage = jTextPane1.getText() + "\n";
+	        jTextPane1.setText(oldMessage + message.extract_string());
+		}
+			
+		System.out.println("Message via callBack from server is " + message.extract_string());
+	}
+
+	public void callBackShowdMessage(int chatId, int senderId, Any message) {
+		View view = Client.getView();
+		
+		AnyHolder addressAccountDetailsOut = new AnyHolder();
+		Client.getAddressBookRef().get(senderId, addressAccountDetailsOut);
+		AddressAccountDetails accountDetails = AddressAccountDetailsHelper.extract(addressAccountDetailsOut.value);
+
+		JTextPane jTextPane1 = view.getJTextPane1();
+        String oldMessage = jTextPane1.getText() + "\n";
+        jTextPane1.setText(oldMessage + 
+        					accountDetails.name + ": " + 
+			        		message.extract_string());
+			
 		System.out.println("Message via callBack from server is " + message.extract_string());
 	}
 }

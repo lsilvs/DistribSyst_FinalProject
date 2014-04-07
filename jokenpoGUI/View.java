@@ -3,6 +3,8 @@ package jokenpoGUI;
 
 import java.awt.Frame;
 
+import Corba.Client;
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -192,13 +194,8 @@ public class View extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
-        // TODO add your handling code here:
-        String message = jTextPane1.getText() + "\n";
-        jTextPane1.setText(message +jTextField1.getText());
+        Client.sendMessage(jTextField1.getText());
         jTextField1.setText("");
-        
-        
-        
     }//GEN-LAST:event_jButton1MouseClicked
 
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
@@ -308,4 +305,8 @@ public class View extends javax.swing.JFrame {
     private javax.swing.JRadioButton rockRadio;
     private javax.swing.JRadioButton scissorsRadio;
     // End of variables declaration//GEN-END:variables
+    
+    public javax.swing.JTextPane getJTextPane1() {
+    	return jTextPane1;
+    }
 }

@@ -20,13 +20,16 @@ module AddressBook {
 module Communication {
 
 	interface ClientOps {
-		void callBack(in any message);
+		void callBackCreateChat(in long chatId, in long senderId, in any message);
+		void callBackShowdMessage(in long chatId, in long senderId, in any message);
 	};
 
 	interface HandlerMessage {
 		void registerCB(in ClientOps c, in long userId);
+		long createChat(in long user1, in long user2);
 		void addUserToChat(in long chatId, in long userId);
-		void sendMessage(in long userId, in any message);
+		void sendMessageToChat(in long chatId, in long senderId, in any message);
+		void sendMessage(in long userId, in any message);	
 	};
 
 };
@@ -39,7 +42,7 @@ module Jokenpo {
 
 	interface HandlerGame {
 		void registerCB(in ClientOps c, in long userId);
-		void newGame(in long gameId, in long playerOne, in long playerTwo);
+		void createGame(in long user1, in long user2);
 		void sendAction(in long gameId, in long playerId, in any option);
 	};
 
