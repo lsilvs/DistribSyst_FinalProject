@@ -27,11 +27,15 @@ class JokenpoServant implements HandlerGameOperations {
 		users.put(user2, "");
 		games.put(ID, users);
 		
-		cbDetails = allCBs.get(user2);
-		
+		cbDetails = allCBs.get(user1);
 		Any anyMessage = ORB.init().create_any();
-		anyMessage.insert_string("$user1 invited you to a new game");
+		anyMessage.insert_string("$user2 joined to the game");
 	  	cbDetails.callBackCreateGame(ID, user1, anyMessage);
+	  	
+	  	cbDetails = allCBs.get(user2);
+		anyMessage = ORB.init().create_any();
+		anyMessage.insert_string("$user1 invited you to a new game");
+	  	cbDetails.callBackCreateGame(ID, user2, anyMessage);
 		
 		return ID++;
 	}
@@ -95,6 +99,8 @@ class JokenpoServant implements HandlerGameOperations {
 				cbDetails = allCBs.get(user);
 				cbDetails.callBackShowdResult(userId[0], userId[1], anyMessage);
 			}
+			game.put(userId[0], "");
+			game.put(userId[1], "");
 		}
 	}
 }

@@ -219,12 +219,7 @@ public class View extends javax.swing.JFrame {
     }                                          
 
     private void quitButtonMouseClicked(java.awt.event.MouseEvent evt) {                                        
-        // TODO add your handling code here:
-        InviteContactUI invite = new InviteContactUI(new javax.swing.JFrame(), true);
-      
-        this.dispose();
-        invite.setVisible(true);
-       
+    	Client.quitGame();
     }                                       
 
     private void paperRadioActionPerformed(java.awt.event.ActionEvent evt) {                                           

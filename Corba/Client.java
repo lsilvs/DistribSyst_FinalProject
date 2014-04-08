@@ -1,6 +1,8 @@
 package Corba;
 import java.util.Properties;
 
+import javax.swing.JTextPane;
+
 import jokenpoGUI.InviteContactUI;
 import jokenpoGUI.RegistrationUI;
 import jokenpoGUI.View;
@@ -153,6 +155,9 @@ public class Client {
 		
 		addressBookRef.displaysAvailableUsers();
 
+		JTextPane jTextPane1 = view.getJTextPane1();
+        jTextPane1.setText("");
+
 		int gameId = jokenpoRef.createGame(addressAccountDetails.id, guest.id);
 		setGameId(gameId);
 		int chatId = communicationRef.createChat(addressAccountDetails.id, guest.id);
@@ -165,7 +170,7 @@ public class Client {
 
 	public static void sendMessage(String message) {
 		Any anyMessage = ORB.init().create_any();
-		anyMessage.insert_string(message);
+		anyMessage.insert_string(addressAccountDetails.name + ": " + message);
 		communicationRef.sendMessageToChat(chatId, addressAccountDetails.id, anyMessage);
 	}
 	
@@ -173,6 +178,21 @@ public class Client {
 		Any anyMessage = ORB.init().create_any();
 		anyMessage.insert_string(message);
 		jokenpoRef.sendAction(gameId, addressAccountDetails.id, anyMessage);
+	}
+
+	public static void quitGame() {
+		AnyHolder addressAccountDetailsOut = new AnyHolder();
+		addressBookRef.get(addressAccountDetails.id, addressAccountDetailsOut);
+		addressBookRef.insert(addressAccountDetailsOut.value, addressAccountDetailsOut);
+		
+		Any anyMessage = ORB.init().create_any();
+		anyMessage.insert_string(addressAccountDetails.name + " left the game");
+		communicationRef.sendMessageToChat(chatId, addressAccountDetails.id, anyMessage);
+
+		addressBookRef.displaysAvailableUsers();
+
+		view.dispose();
+        invite.setVisible(true);
 	}
 
 }

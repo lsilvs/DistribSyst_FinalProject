@@ -34,12 +34,10 @@ class ClientOpsCommunicationImpl implements Communication.CommunicationOpsOperat
 		
 		AnyHolder addressAccountDetailsOut = new AnyHolder();
 		Client.getAddressBookRef().get(senderId, addressAccountDetailsOut);
-		AddressAccountDetails accountDetails = AddressAccountDetailsHelper.extract(addressAccountDetailsOut.value);
 
 		JTextPane jTextPane1 = view.getJTextPane1();
         String oldMessage = jTextPane1.getText() + "\n";
-        jTextPane1.setText(oldMessage + 
-        					accountDetails.name + ": " + 
+        jTextPane1.setText(oldMessage +
 			        		message.extract_string());
 			
 		System.out.println("Message via callBack from server is " + message.extract_string());

@@ -1,5 +1,6 @@
 package Corba;
 
+import javax.swing.JRadioButton;
 import javax.swing.JTextPane;
 
 import jokenpoGUI.View;
@@ -14,6 +15,13 @@ class ClientOpsJokenpoImpl implements Jokenpo.JokenpoOpsOperations {
 	@Override
 	public void callBackCreateGame(int gameId, int senderId, Any message) {
 		Client.setGameId(gameId);
+		View view = Client.getView();
+		view.getPaperButton().setEnabled(true);
+        view.getPaperButton().setSelected(false);
+        view.getRockButton().setEnabled(true);
+        view.getRockButton().setSelected(false);
+        view.getScissorsButton().setEnabled(true);
+        view.getScissorsButton().setSelected(false);
 	}
 
 	@Override
@@ -34,6 +42,13 @@ class ClientOpsJokenpoImpl implements Jokenpo.JokenpoOpsOperations {
 		JTextPane jTextPane1 = view.getJTextPane1();
         String oldMessage = jTextPane1.getText() + "\n";
         jTextPane1.setText(oldMessage + result);
+        
+        view.getPaperButton().setEnabled(true);
+        view.getPaperButton().setSelected(false);
+        view.getRockButton().setEnabled(true);
+        view.getRockButton().setSelected(false);
+        view.getScissorsButton().setEnabled(true);
+        view.getScissorsButton().setSelected(false);
 			
 		System.out.println("Message via callBack from server is " + message.extract_string());
 		
