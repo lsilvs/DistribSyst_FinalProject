@@ -72,6 +72,7 @@ public class Client {
 			// the reason that I choose to use the port 1050
 			Properties props = new Properties();
 			props.put("org.omg.CORBA.ORBInitialPort", "1050");
+			props.put("org.omg.CORBA.ORBInitialHost", "localhost");
 			
 			// create and initialize the ORB
 			ORB orb = ORB.init(args, props);
