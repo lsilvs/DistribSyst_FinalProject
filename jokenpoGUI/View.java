@@ -257,7 +257,7 @@ public class View extends javax.swing.JFrame {
         } else if (rockRadio.getSelectedObjects() != null) {
         	message = "rock";
         } else {
-        	message = "not_selected";
+        	message = "error";
         }
         
         rockRadio.setEnabled(false);
