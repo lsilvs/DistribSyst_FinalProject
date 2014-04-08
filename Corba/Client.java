@@ -1,9 +1,5 @@
 package Corba;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
-
-import javax.swing.JTextPane;
 
 import jokenpoGUI.InviteContactUI;
 import jokenpoGUI.RegistrationUI;
@@ -11,7 +7,6 @@ import jokenpoGUI.View;
 
 import org.omg.CORBA.Any;
 import org.omg.CORBA.AnyHolder;
-import org.omg.CORBA.IntHolder;
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.SystemException;
 import org.omg.CosNaming.NameComponent;
@@ -21,11 +16,17 @@ import org.omg.CosNaming.NamingContextHelper;
 import AddressBook.Address;
 import AddressBook.AddressAccountDetails;
 import AddressBook.AddressAccountDetailsHelper;
+import AddressBook.AddressBookOps;
+import AddressBook.AddressBookOps_Tie;
 import AddressBook.AddressHelper;
+import Communication.CommunicationOps;
+import Communication.CommunicationOps_Tie;
 import Communication.HandlerMessage;
 import Communication.HandlerMessageHelper;
 import Jokenpo.HandlerGame;
 import Jokenpo.HandlerGameHelper;
+import Jokenpo.JokenpoOps;
+import Jokenpo.JokenpoOps_Tie;
 
 public class Client {
 
@@ -122,10 +123,13 @@ public class Client {
 		addressBookRef.insert(anyAccount, aad);
 		addressAccountDetails = AddressAccountDetailsHelper.extract(aad.value);
 		
-		Communication.CommunicationOps callBackCommunicationRef = new Communication.CommunicationOps_Tie(new ClientOpsCommunicationImpl());
+		AddressBookOps callBackAddressBookRef = new AddressBookOps_Tie(new ClientOpsAddressBookImpl());
+		addressBookRef.registerCB(callBackAddressBookRef, addressAccountDetails.id);
+		
+		CommunicationOps callBackCommunicationRef = new CommunicationOps_Tie(new ClientOpsCommunicationImpl());
 		communicationRef.registerCB(callBackCommunicationRef, addressAccountDetails.id);
 		
-		Jokenpo.JokenpoOps callBackJokenpoRef = new Jokenpo.JokenpoOps_Tie(new ClientOpsJokenpoImpl());
+		JokenpoOps callBackJokenpoRef = new JokenpoOps_Tie(new ClientOpsJokenpoImpl());
         jokenpoRef.registerCB(callBackJokenpoRef, addressAccountDetails.id);
 		
 		registrationUI.dispose();
@@ -133,35 +137,22 @@ public class Client {
 	}
 
 	private static void invite() {
-		AnyHolder addressBook = new AnyHolder();
-		addressBookRef.getList(addressBook);
-
-		System.out.println("Message via callBack from server is " + addressBook.value.extract_string());
-
-		List<String> items = Arrays.asList(addressBook.value.extract_string().split("\\s*,\\s*"));
-		
-		for (String temp : items) {
-			int foo = Integer.parseInt(temp);
-			AnyHolder account = new AnyHolder();
-			addressBookRef.get(foo, account);
-			AddressAccountDetails accountDetails = AddressAccountDetailsHelper.extract(account.value);
-			invite.getjComboBox1().addItem(accountDetails);
-		}
-
-		/* Add this code into AddressAccountDetails.java after compile the idlfile.idl
-		@Override
-		public String toString() {
-		  return this.name;
-		}
-		*/
-
+		addressBookRef.displaysAvailableUsers();
 		invite.setVisible(true);
 	}
 
 	public static void view(InviteContactUI invite) {
-		
 		AddressAccountDetails guest = (AddressAccountDetails) invite.getjComboBox1().getSelectedItem();
 		
+		AnyHolder addressAccountDetailsOut = new AnyHolder();
+		addressBookRef.get(guest.id, addressAccountDetailsOut);
+		addressBookRef.remove(addressAccountDetailsOut.value, addressAccountDetailsOut);
+		
+		addressBookRef.get(addressAccountDetails.id, addressAccountDetailsOut);
+		addressBookRef.remove(addressAccountDetailsOut.value, addressAccountDetailsOut);
+		
+		addressBookRef.displaysAvailableUsers();
+
 		int gameId = jokenpoRef.createGame(addressAccountDetails.id, guest.id);
 		setGameId(gameId);
 		int chatId = communicationRef.createChat(addressAccountDetails.id, guest.id);

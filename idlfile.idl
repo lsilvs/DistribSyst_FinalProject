@@ -9,14 +9,16 @@ module AddressBook {
 	};
 
 	interface AddressBookOps {
-		void callBackAddUser(in long senderId);
+		void callBackSetInviteList(in string availableList);
 	};
 
 	interface Address {
 		void registerCB(in AddressBookOps c, in long userId);
 		void insert(in any addressAccountDetailsIn, out any addressAccountDetailsOut);
+		void remove(in any addressAccountDetailsIn, out any addressAccountDetailsOut);
 		void get(in long addressId, out any addressAccountDetailsOut);
 		void getList(out any addressBook);
+		void displaysAvailableUsers();
 	};
 
 };
