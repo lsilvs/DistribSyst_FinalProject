@@ -282,6 +282,19 @@ public class View extends javax.swing.JFrame {
     }                                      
     
     
+    public javax.swing.JRadioButton getPaperButton(){
+    	return this.paperRadio;
+    }
+    public javax.swing.JRadioButton getRockButton(){
+    	return this.rockRadio;
+    }
+    public javax.swing.JRadioButton getScissorsButton(){
+    	return this.scissorsRadio;
+    }
+    
+    
+    
+    
  
     /**
      * @param args the command line arguments
