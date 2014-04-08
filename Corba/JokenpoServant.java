@@ -80,7 +80,7 @@ class JokenpoServant implements HandlerGameOperations {
 
 			} else if(option[0].equals("scissors")) {
 				if(option[1].equals("paper")) {
-					result = "$user1 (scissors) won $user1 (paper)";
+					result = "$user1 (scissors) won $user2 (paper)";
 				} else if(option[1].equals("rock")) {
 					result = "$user2 (rock) won $user1 (scissors)";
 				} else if(option[1].equals("scissors")) {
