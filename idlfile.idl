@@ -41,7 +41,7 @@ module Jokenpo {
 
 	interface JokenpoOps {
 		void callBackCreateGame(in long gameId, in long senderId, in any message);
-		void callBackShowdResult(in long gameId, in long senderId, in any message);
+		void callBackShowdResult(in long playerId1, in long playerId2, in any message);
 	};
 
 	interface HandlerGame {

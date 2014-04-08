@@ -36,6 +36,7 @@ public class Client {
 	private static InviteContactUI invite = new InviteContactUI(new javax.swing.JFrame(), false);
 	private static View view = new View();
 	private static int chatId;
+	private static int gameId;
 	
 	public static AddressAccountDetails getAddressAccountDetails() {
 		return addressAccountDetails;
@@ -55,6 +56,10 @@ public class Client {
 	
 	public static void setChatId(int id) {
 		chatId = id;
+	}
+	
+	public static void setGameId(int id) {
+		gameId = id;
 	}
 
 	public static void main(String args[]) {
@@ -153,15 +158,14 @@ public class Client {
 		invite.setVisible(true);
 	}
 
-public static void view(InviteContactUI invite) {
+	public static void view(InviteContactUI invite) {
 		
 		AddressAccountDetails guest = (AddressAccountDetails) invite.getjComboBox1().getSelectedItem();
 		
+		int gameId = jokenpoRef.createGame(addressAccountDetails.id, guest.id);
+		setGameId(gameId);
 		int chatId = communicationRef.createChat(addressAccountDetails.id, guest.id);
-		Client.setChatId(chatId);
-//		Any anyMessage = ORB.init().create_any();
-//		anyMessage.insert_string(addressAccountDetails.name + " invited you to a game");
-//		communicationRef.sendMessageToChat(chatId, addressAccountDetails.id, anyMessage);
+		setChatId(chatId);
 
 		view.setVisible(true);
         invite.dispose();
@@ -173,22 +177,29 @@ public static void view(InviteContactUI invite) {
 		anyMessage.insert_string(message);
 		communicationRef.sendMessageToChat(chatId, addressAccountDetails.id, anyMessage);
 	}
+	
+	public static void chooseOption(String message) {
+		Any anyMessage = ORB.init().create_any();
+		anyMessage.insert_string(message);
+		jokenpoRef.sendAction(gameId, addressAccountDetails.id, anyMessage);
+	}
 }
 
 class ClientOpsCommunicationImpl implements Communication.CommunicationOpsOperations {
 	public void callBackCreateChat(int chatId, int senderId, org.omg.CORBA.Any message) {
 		Client.setChatId(chatId);
 
-		if(senderId != Client.getAddressAccountDetails().id) {
-			View view = Client.getView();
+		View view = Client.getView();
 			
-			view.setVisible(true);
-	        Client.getInvite().dispose();
-	        
-			JTextPane jTextPane1 = view.getJTextPane1();
-	        String oldMessage = jTextPane1.getText() + "\n";
-	        jTextPane1.setText(oldMessage + message.extract_string());
-		}
+		view.setVisible(true);
+        Client.getInvite().dispose();
+        
+        AnyHolder anyAccount = new AnyHolder();
+        Client.getAddressBookRef().get(senderId, anyAccount);
+        AddressAccountDetails sender = AddressAccountDetailsHelper.extract(anyAccount.value); 		
+        
+		JTextPane jTextPane1 = view.getJTextPane1();
+        jTextPane1.setText(sender.name + " invited you to a game");
 			
 		System.out.println("Message via callBack from server is " + message.extract_string());
 	}
@@ -211,19 +222,31 @@ class ClientOpsCommunicationImpl implements Communication.CommunicationOpsOperat
 }
 
 class ClientOpsJokenpoImpl implements Jokenpo.JokenpoOpsOperations {
-	public void callBack(org.omg.CORBA.Any message) {
-		System.out.println("Message via callBack from server is " + message.extract_string());
-	}
-
 	@Override
 	public void callBackCreateGame(int gameId, int senderId, Any message) {
-		// TODO Auto-generated method stub
-		
+		Client.setGameId(gameId);
 	}
 
 	@Override
-	public void callBackShowdResult(int gameId, int senderId, Any message) {
-		// TODO Auto-generated method stub
+	public void callBackShowdResult(int player1, int player2, Any message) {
+		View view = Client.getView();
+		
+		AnyHolder addressAccountDetailsOut = new AnyHolder();
+		Client.getAddressBookRef().get(player1, addressAccountDetailsOut);
+		AddressAccountDetails accountDetails1 = AddressAccountDetailsHelper.extract(addressAccountDetailsOut.value);
+		
+		Client.getAddressBookRef().get(player2, addressAccountDetailsOut);
+		AddressAccountDetails accountDetails2 = AddressAccountDetailsHelper.extract(addressAccountDetailsOut.value);
+
+		String result = message.extract_string().replace("$user1", accountDetails1.name)
+												.replace("$user2", accountDetails2.name);
+		
+		
+		JTextPane jTextPane1 = view.getJTextPane1();
+        String oldMessage = jTextPane1.getText() + "\n";
+        jTextPane1.setText(oldMessage + result);
+			
+		System.out.println("Message via callBack from server is " + message.extract_string());
 		
 	}
 }

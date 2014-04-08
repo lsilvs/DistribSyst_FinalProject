@@ -248,10 +248,24 @@ public class View extends javax.swing.JFrame {
     }//GEN-LAST:event_scissorsRadioMouseClicked
 
     private void playButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_playButtonMouseClicked
-        // TODO add your handling code here:
+        String message = null;
+        
+        if (scissorsRadio.getSelectedObjects() != null) {
+        	message = "scissors";
+        } else if (paperRadio.getSelectedObjects() != null) {
+        	message = "paper";
+        } else if (rockRadio.getSelectedObjects() != null) {
+        	message = "rock";
+        } else {
+        	message = "not_selected";
+        }
+        
         rockRadio.setEnabled(false);
         scissorsRadio.setEnabled(false);
         paperRadio.setEnabled(false);
+
+        Client.chooseOption(message);
+
     }//GEN-LAST:event_playButtonMouseClicked
 
     /**

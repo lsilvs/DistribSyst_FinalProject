@@ -29,7 +29,7 @@ class CommunicationServant implements HandlerMessageOperations {
 		cbDetails = allCBs.get(user2);
 		
 		Any anyMessage = ORB.init().create_any();
-		anyMessage.insert_string("Fulano invited you to a new game");
+		anyMessage.insert_string("new_game");
 	  	cbDetails.callBackCreateChat(ID, user1, anyMessage);
 		
 		return ID++;
