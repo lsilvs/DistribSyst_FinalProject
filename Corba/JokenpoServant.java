@@ -11,21 +11,25 @@ import Jokenpo.JokenpoOps;
 
 class JokenpoServant implements HandlerGameOperations {
 	
-	private Hashtable<Integer, JokenpoOps> allCBs = new Hashtable<Integer, JokenpoOps>();
-	private Hashtable<Integer, Hashtable<Integer, String>> games = new Hashtable<Integer, Hashtable<Integer, String>>();
-	private JokenpoOps cbDetails;
-	private static Integer ID = 1;
+	private Hashtable<Integer, JokenpoOps> allCBs = new Hashtable<Integer, JokenpoOps>(); //stores all the callbacks related with the game.
+	private Hashtable<Integer, Hashtable<Integer, String>> games = new Hashtable<Integer, Hashtable<Integer, String>>(); // stores all the games created.
+	private JokenpoOps cbDetails; //
+	private static Integer ID = 1; // ID is used to references a game.
 
+	
+	//register a callback in the hashtable allCBS.
 	public void registerCB (JokenpoOps c, int userId) {
 		allCBs.put(userId, c);
 		System.out.println("User registred to communication: " + userId);
 	}
 
+	//creates a new game and puts into the users hashtable.
 	public int createGame (int user1, int user2) {
 		Hashtable<Integer, String> users = new Hashtable<Integer, String>();
 		users.put(user1, "");
 		users.put(user2, "");
 		games.put(ID, users);
+		
 		
 		cbDetails = allCBs.get(user1);
 		Any anyMessage = ORB.init().create_any();
@@ -40,6 +44,7 @@ class JokenpoServant implements HandlerGameOperations {
 		return ID++;
 	}
 	
+	//Send an action of a player in the game. The action represents the move of a player.
 	public void sendAction (int gameId, int senderId, org.omg.CORBA.Any message) {	
 		Integer counter = 0;
 		Integer answers = 0;
@@ -51,6 +56,7 @@ class JokenpoServant implements HandlerGameOperations {
 		Integer[] userId = new Integer[2];
 		String[] option = new String[2];
 
+		//verify if the both players already played.
 		Enumeration<Integer> enumKey = game.keys();
 		while(enumKey.hasMoreElements()) {
 			userId[counter] = enumKey.nextElement();
@@ -61,8 +67,9 @@ class JokenpoServant implements HandlerGameOperations {
 		    counter++;
 		}
 		
-		String result = "nao entrou em lugar nenhum";
+		String result = "";
 
+		//checks the moves os the players and decide who will wins.
 		if(answers == 2) {
 			if(option[0].equals("paper")) {
 				if(option[1].equals("paper")) {
@@ -95,6 +102,7 @@ class JokenpoServant implements HandlerGameOperations {
 			Any anyMessage = ORB.init().create_any();
 			anyMessage.insert_string(result);
 
+			//show the result to the players.
 			for (Integer user : userId) {
 				cbDetails = allCBs.get(user);
 				cbDetails.callBackShowdResult(userId[0], userId[1], anyMessage);

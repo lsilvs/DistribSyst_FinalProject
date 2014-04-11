@@ -22,6 +22,9 @@ public class View extends javax.swing.JFrame {
      */
     public View() {
         initComponents();
+        
+        this.jScrollPane1.setWheelScrollingEnabled(true);
+        
     }
 
     /**
