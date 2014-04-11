@@ -19,8 +19,8 @@ public class Server {
 	public static void main (String args[]) {
 		try {
 
-			// At unix based system the port 900 is used for something, that is
-			// the reason that I choose to use the port 1050
+			// At unix based system the ports below 1024 are reserved, 
+						// so we changed it to use the port 1050
 			Properties props = new Properties();
 			props.put("org.omg.CORBA.ORBInitialPort", "1050");
 			// create and initialize the ORB

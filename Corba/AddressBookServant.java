@@ -14,6 +14,7 @@ import Jokenpo.JokenpoOps;
 
 class AddressBookServant implements AddressOperations {
 
+	// Set initial variables
 	private Hashtable<Integer, AddressBookOps> allCBs = new Hashtable<Integer, AddressBookOps>();
 	private Hashtable<Integer, AddressAccountDetails> allAccounts = new Hashtable<Integer, AddressAccountDetails>();
 	private Hashtable<Integer, AddressAccountDetails> availableAccounts = new Hashtable<Integer, AddressAccountDetails>();
@@ -21,13 +22,16 @@ class AddressBookServant implements AddressOperations {
 	private AddressBookOps cbDetails;
 	private static Integer ID = 1;
 	
+	// Register the callback for the user
 	public void registerCB (AddressBookOps c, int userId) {
 		allCBs.put(userId, c);
 		System.out.println("User registred to communication: " + userId);
 	}
 
+	// Insert user to the hash 
 	public void insert (org.omg.CORBA.Any addressAccountDetailsIn, org.omg.CORBA.AnyHolder addressAccountDetailsOut) {
 		accountDetails = AddressAccountDetailsHelper.extract(addressAccountDetailsIn);
+		// Generate a new ID if the user don't have it
 		if(accountDetails.id == 0) {
 			accountDetails.id = ID;
 			ID++;
@@ -39,6 +43,7 @@ class AddressBookServant implements AddressOperations {
 		addressAccountDetailsOut.value = anyAccount;
 	}
 
+	// Remove the user from the available list
 	public void remove (org.omg.CORBA.Any addressAccountDetailsIn, org.omg.CORBA.AnyHolder addressAccountDetailsOut) {
 		accountDetails = AddressAccountDetailsHelper.extract(addressAccountDetailsIn);
 		availableAccounts.remove(accountDetails.id);
@@ -47,6 +52,7 @@ class AddressBookServant implements AddressOperations {
 		addressAccountDetailsOut.value = anyAccount;
 	}
 	
+	// Mount a string with all available users ID
 	public void displaysAvailableUsers () {
 		Iterator<AddressAccountDetails> itIds = availableAccounts.values().iterator();
 		String str = new String();
@@ -57,6 +63,7 @@ class AddressBookServant implements AddressOperations {
 			}
 		}
 		
+		// Evoke the invite list callback
 		Iterator<AddressAccountDetails> itCB = availableAccounts.values().iterator();
 		while (itCB.hasNext()) {
 			cbDetails = allCBs.get(itCB.next().id);
@@ -65,6 +72,7 @@ class AddressBookServant implements AddressOperations {
 	
 	}
 	
+	// Retuns a user by ID
 	public void get (int addressId, org.omg.CORBA.AnyHolder addressAccountDetailsOut) {
   		accountDetails = allAccounts.get(addressId);
 
@@ -74,6 +82,7 @@ class AddressBookServant implements AddressOperations {
 
 	}
 
+	// Return a string with all available users list
 	public void getList (org.omg.CORBA.AnyHolder addressBook) {
 	  Iterator<AddressAccountDetails> it = availableAccounts.values().iterator();
 	  String str = new String();

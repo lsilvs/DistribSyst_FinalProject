@@ -10,16 +10,19 @@ import Communication.HandlerMessageOperations;
 
 class CommunicationServant implements HandlerMessageOperations {
 
+	// Set initial variables
 	private Hashtable<Integer, CommunicationOps> allCBs = new Hashtable<Integer, CommunicationOps>();
 	private Hashtable<Integer, ArrayList<Integer>> chats = new Hashtable<Integer, ArrayList<Integer>>();
 	private CommunicationOps cbDetails;
 	private static Integer ID = 1;
 
+	// Register the callback for the user
 	public void registerCB (CommunicationOps c, int userId) {
 		allCBs.put(userId, c);
 		System.out.println("User registred to communication: " + userId);
 	}
 
+	// Create a chat with both users
 	public int createChat (int user1, int user2) {
 		ArrayList<Integer> users = new ArrayList<Integer>();
 		users.add(user1);
@@ -35,6 +38,7 @@ class CommunicationServant implements HandlerMessageOperations {
 		return ID++;
 	}
 	
+	// Send message to all members of a chat
 	public void sendMessageToChat (int chatId, int senderId, org.omg.CORBA.Any message) {		
 		ArrayList<Integer> chat = chats.get(chatId);
 
